@@ -5,9 +5,9 @@ export default {
     extend: {
       colors: {
         'solana-purple': '#9945FF',
-        'solana-green': '#14F195',
-      },
-    },
+        'solana-green': '#14F195'
+      }
+    }
   },
-  plugins: [],
+  plugins: []
 };

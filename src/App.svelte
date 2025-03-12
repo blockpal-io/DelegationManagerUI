@@ -1,94 +1,104 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { availablePrograms, availableGames, delegations, addDelegation, updateDelegation } from './lib/stores';
-  import AddressStep from './lib/components/AddressStep.svelte';
-  import NicknameStep from './lib/components/NicknameStep.svelte';
-  import PermissionsStep from './lib/components/PermissionsStep.svelte';
-  import ConfirmStep from './lib/components/ConfirmStep.svelte';
-  import SuccessStep from './lib/components/SuccessStep.svelte';
-  import DelegationList from './lib/components/DelegationList.svelte';
-  import type { Delegation, Permission } from './types';
-  
+  import { onMount } from "svelte";
+  import {
+    availablePrograms,
+    availableGames,
+    delegations,
+    addDelegation,
+    updateDelegation,
+  } from "./lib/stores";
+  import AddressStep from "./lib/components/AddressStep.svelte";
+  import NicknameStep from "./lib/components/NicknameStep.svelte";
+  import PermissionsStep from "./lib/components/PermissionsStep.svelte";
+  import ConfirmStep from "./lib/components/ConfirmStep.svelte";
+  import SuccessStep from "./lib/components/SuccessStep.svelte";
+  import DelegationList from "./lib/components/DelegationList.svelte";
+  import type { Delegation, Permission } from "./types";
+
   // View state
-  let view: 'list' | 'form' = 'list';
+  let view: "list" | "form" = "list";
   let step = 1;
-  
+
   // Form data
-  let address = '';
-  let nickname = '';
-  let delegateNickname = '';
-  let permission: Permission = 'games';
-  let customContract = '';
-  let additionalDelegates: { address: string; nickname: string; }[] = [];
-  
+  let address = "";
+  let nickname = "";
+  let delegateNickname = "";
+  let permission: Permission = "games";
+  let customContract = "";
+  let additionalDelegates: { address: string; nickname: string }[] = [];
+
   // Editing state
   let isEditing = false;
   let editingId: string | null = null;
-  
+
   // Reset form
   function resetForm() {
-    address = '';
-    nickname = '';
-    delegateNickname = '';
-    permission = 'games';
-    customContract = '';
+    address = "";
+    nickname = "";
+    delegateNickname = "";
+    permission = "games";
+    customContract = "";
     additionalDelegates = [];
-    $availablePrograms = $availablePrograms.map(p => ({ ...p, selected: false }));
-    $availableGames = $availableGames.map(g => ({ ...g, selected: false }));
+    $availablePrograms = $availablePrograms.map((p) => ({
+      ...p,
+      selected: false,
+    }));
+    $availableGames = $availableGames.map((g) => ({ ...g, selected: false }));
     isEditing = false;
     editingId = null;
     step = 1;
   }
-  
+
   // Start adding new delegation
   function handleAddNew() {
     resetForm();
-    view = 'form';
+    view = "form";
   }
-  
+
   // Edit existing delegation
   function handleEdit(event: CustomEvent) {
     const delegation: Delegation = event.detail.delegation;
-    
+
     address = delegation.address;
-    nickname = delegation.nickname || '';
-    delegateNickname = delegation.delegateNickname || '';
+    nickname = delegation.nickname || "";
+    delegateNickname = delegation.delegateNickname || "";
     permission = delegation.permission;
-    customContract = delegation.customContract || '';
+    customContract = delegation.customContract || "";
     additionalDelegates = delegation.additionalDelegates || [];
-    
+
     // Reset programs and set selected ones
-    $availablePrograms = $availablePrograms.map(p => ({
+    $availablePrograms = $availablePrograms.map((p) => ({
       ...p,
-      selected: delegation.programs.some(dp => dp.id === p.id && dp.selected)
+      selected: delegation.programs.some((dp) => dp.id === p.id && dp.selected),
     }));
 
     // Reset games and set selected ones
-    $availableGames = $availableGames.map(g => ({
+    $availableGames = $availableGames.map((g) => ({
       ...g,
-      selected: delegation.games?.some(dg => dg.id === g.id && dg.selected) || false
-    }));
-    
-    isEditing = true;
-    editingId = delegation.id;
-    view = 'form';
-    step = 1;
-  }
-  
-  // Handle form submission
-  function handleConfirm() {
-    const selectedPrograms = $availablePrograms.map(p => ({
-      id: p.id,
-      name: p.name,
-      selected: p.selected
+      selected:
+        delegation.games?.some((dg) => dg.id === g.id && dg.selected) || false,
     }));
 
-    const selectedGames = $availableGames.map(g => ({
+    isEditing = true;
+    editingId = delegation.id;
+    view = "form";
+    step = 1;
+  }
+
+  // Handle form submission
+  function handleConfirm() {
+    const selectedPrograms = $availablePrograms.map((p) => ({
+      id: p.id,
+      name: p.name,
+      selected: p.selected,
+    }));
+
+    const selectedGames = $availableGames.map((g) => ({
       id: g.id,
       name: g.name,
-      selected: g.selected
+      selected: g.selected,
     }));
-    
+
     const delegationData = {
       address,
       nickname: nickname || undefined,
@@ -96,56 +106,57 @@
       permission,
       programs: selectedPrograms,
       games: selectedGames,
-      customContract: permission === 'custom' ? customContract : undefined,
-      additionalDelegates: additionalDelegates.length > 0 ? additionalDelegates : undefined,
+      customContract: permission === "custom" ? customContract : undefined,
+      additionalDelegates:
+        additionalDelegates.length > 0 ? additionalDelegates : undefined,
     };
-    
+
     if (isEditing && editingId) {
       updateDelegation(editingId, delegationData);
     } else {
       addDelegation(delegationData);
     }
-    
+
     step = 5; // Go to success step
   }
-  
+
   // Navigation functions
   function goToStep(newStep: number) {
     step = newStep;
   }
-  
+
   function goToList() {
-    view = 'list';
+    view = "list";
     resetForm();
   }
-  
+
   // Mock data for development
   onMount(() => {
     // Add some sample delegations for demonstration
     if ($delegations.length === 0) {
       addDelegation({
-        address: 'GgPpTKg78vmzgDtP1DNn7KNNHhQvDTJYxdcxRDQzqwjy',
-        nickname: 'Trading Bot',
-        permission: 'limited',
+        address: "GgPpTKg78vmzgDtP1DNn7KNNHhQvDTJYxdcxRDQzqwjy",
+        nickname: "Trading Bot",
+        permission: "limited",
         programs: [
-          { id: '1', name: 'Raydium', selected: true },
-          { id: '2', name: 'Serum', selected: true },
-          { id: '3', name: 'Orca', selected: false },
-          { id: '4', name: 'Jupiter', selected: true },
-          { id: '5', name: 'Marinade', selected: false },
-          { id: '6', name: 'Solend', selected: false },
-          { id: '7', name: 'Mango Markets', selected: false },
-          { id: '8', name: 'Drift Protocol', selected: false },
+          { id: "1", name: "Raydium", selected: true },
+          { id: "2", name: "Serum", selected: true },
+          { id: "3", name: "Orca", selected: false },
+          { id: "4", name: "Jupiter", selected: true },
+          { id: "5", name: "Marinade", selected: false },
+          { id: "6", name: "Solend", selected: false },
+          { id: "7", name: "Mango Markets", selected: false },
+          { id: "8", name: "Drift Protocol", selected: false },
         ],
-        games: $availableGames.map(g => ({ ...g, selected: false }))
+        games: $availableGames.map((g) => ({ ...g, selected: false })),
       });
-      
+
       addDelegation({
-        address: 'wallet.sol',
-        nickname: 'Mobile Wallet',
-        permission: 'full',
-        programs: $availablePrograms.map(p => ({ ...p, selected: false })),
-        games: $availableGames.map(g => ({ ...g, selected: false }))
+        address: "wallet.sol",
+        nickname: "Mobile Wallet",
+        permission: "full",
+        programs: $availablePrograms.map((p) => ({ ...p, selected: false })),
+        games: $availableGames.map((g) => ({ ...g, selected: false })),
       });
     }
   });
@@ -156,26 +167,25 @@
     <img
       alt="Blockpal Logo"
       class="h-24 w-auto"
-      src="/images/blockpal-logo.png"
+      src="./images/blockpal-logo.png"
     />
-    <h1 class="text-xl font-medium text-[#00153D]">Wallet Delegation Manager</h1>
+    <h1 class="text-xl font-medium text-[#00153D]">
+      Wallet Delegation Manager
+    </h1>
   </header>
-  
-  {#if view === 'list'}
-    <DelegationList 
-      on:add={handleAddNew}
-      on:edit={handleEdit}
-    />
+
+  {#if view === "list"}
+    <DelegationList on:add={handleAddNew} on:edit={handleEdit} />
   {:else}
     <div class="bg-white border border-gray-200 rounded-lg p-6">
       {#if step === 1}
-        <NicknameStep 
+        <NicknameStep
           bind:nickname
           on:next={() => goToStep(2)}
           on:cancel={goToList}
         />
       {:else if step === 2}
-        <AddressStep 
+        <AddressStep
           bind:address
           bind:delegateNickname
           bind:additionalDelegates
@@ -183,7 +193,7 @@
           on:next={() => goToStep(3)}
         />
       {:else if step === 3}
-        <PermissionsStep 
+        <PermissionsStep
           {address}
           {delegateNickname}
           {nickname}
@@ -193,7 +203,7 @@
           on:next={() => goToStep(4)}
         />
       {:else if step === 4}
-        <ConfirmStep 
+        <ConfirmStep
           {address}
           {delegateNickname}
           {nickname}
@@ -205,7 +215,7 @@
           on:confirm={handleConfirm}
         />
       {:else if step === 5}
-        <SuccessStep 
+        <SuccessStep
           {isEditing}
           on:done={goToList}
           on:addAnother={() => {

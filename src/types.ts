@@ -21,6 +21,6 @@ export interface Delegation {
   programs: Program[];
   games: Game[];
   customContract?: string;
-  additionalDelegates?: { address: string; nickname: string; }[];
+  additionalDelegates?: { address: string; nickname: string }[];
   createdAt: Date;
 }
