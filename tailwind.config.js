@@ -4,12 +4,8 @@ export default {
   theme: {
     extend: {
       colors: {
-<<<<<<< Updated upstream
         'solana-purple': '#9945FF',
-        'solana-green': '#14F195'
-      }
-    }
-=======
+        'solana-green': '#14F195',
         'midnight': '#1C2526',
         'cyan': '#A3BFFA',
         'neon-green': '#00FFA3',
@@ -22,7 +18,6 @@ export default {
         'inter': ['Inter', 'sans-serif'],
       },
     },
->>>>>>> Stashed changes
   },
   plugins: []
 };

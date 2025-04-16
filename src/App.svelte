@@ -1,6 +1,7 @@
 <script lang="ts">
-<<<<<<< Updated upstream
   import { onMount } from "svelte";
+  import LandingPage from './lib/components/LandingPage.svelte';
+  import DelegationManager from './lib/components/DelegationManager.svelte';
   import {
     availablePrograms,
     availableGames,
@@ -16,8 +17,14 @@
   import DelegationList from "./lib/components/DelegationList.svelte";
   import type { Delegation, Permission } from "./types";
 
-  // View state
+  let currentPath = window.location.pathname;
   let view: "list" | "form" = "list";
+
+  window.addEventListener('popstate', () => {
+    currentPath = window.location.pathname;
+  });
+
+  // View state
   let step = 1;
 
   // Form data
@@ -163,85 +170,8 @@
   });
 </script>
 
-<main class="max-w-2xl mx-auto p-4 sm:p-6">
-  <header class="mb-8 flex flex-col items-center space-y-4">
-    <img
-      alt="Blockpal Logo"
-      class="h-24 w-auto"
-      src="./images/blockpal-logo.png"
-    />
-    <h1 class="text-xl font-medium text-[#00153D]">
-      Wallet Delegation Manager
-    </h1>
-  </header>
-
-  {#if view === "list"}
-    <DelegationList on:add={handleAddNew} on:edit={handleEdit} />
-  {:else}
-    <div class="bg-white border border-gray-200 rounded-lg p-6">
-      {#if step === 1}
-        <NicknameStep
-          bind:nickname
-          on:next={() => goToStep(2)}
-          on:cancel={goToList}
-        />
-      {:else if step === 2}
-        <AddressStep
-          bind:address
-          bind:delegateNickname
-          bind:additionalDelegates
-          on:back={() => goToStep(1)}
-          on:next={() => goToStep(3)}
-        />
-      {:else if step === 3}
-        <PermissionsStep
-          {address}
-          {delegateNickname}
-          {nickname}
-          bind:permission
-          bind:customContract
-          on:back={() => goToStep(2)}
-          on:next={() => goToStep(4)}
-        />
-      {:else if step === 4}
-        <ConfirmStep
-          {address}
-          {delegateNickname}
-          {nickname}
-          {permission}
-          {additionalDelegates}
-          programs={$availablePrograms}
-          {customContract}
-          on:back={() => goToStep(3)}
-          on:confirm={handleConfirm}
-        />
-      {:else if step === 5}
-        <SuccessStep
-          {isEditing}
-          on:done={goToList}
-          on:addAnother={() => {
-            resetForm();
-            goToStep(1);
-          }}
-        />
-      {/if}
-    </div>
-  {/if}
-</main>
-=======
-  import LandingPage from './lib/components/LandingPage.svelte';
-  import DelegationManager from './lib/components/DelegationManager.svelte';
-  
-  let currentPath = window.location.pathname;
-
-  window.addEventListener('popstate', () => {
-    currentPath = window.location.pathname;
-  });
-</script>
-
 {#if currentPath === '/'}
   <LandingPage />
 {:else if currentPath === '/app'}
   <DelegationManager />
 {/if}
->>>>>>> Stashed changes
