@@ -33,15 +33,15 @@
 </script>
 
 <div class="space-y-4">
-  <h2 class="text-xl font-semibold">Set Permissions</h2>
-  <p class="text-gray-600">Choose what this delegate can access.</p>
+  <h2 class="text-xl font-semibold text-white">Set Permissions</h2>
+  <p class="text-gray-300">Choose what this delegate can access.</p>
   
-  <div class="p-3 bg-gray-100 rounded-md">
-    <p class="text-sm font-medium">Delegate Address</p>
-    <p class="text-gray-700 break-all">{address}</p>
+  <div class="p-3 bg-black/10 backdrop-blur-sm border border-white/10 rounded-xl">
+    <p class="text-sm font-medium text-gray-300">Delegate Address</p>
+    <p class="text-white break-all">{address}</p>
     {#if nickname}
-      <p class="text-sm font-medium mt-2">Nickname</p>
-      <p class="text-gray-700">{nickname}</p>
+      <p class="text-sm font-medium mt-2 text-gray-300">Nickname</p>
+      <p class="text-white">{nickname}</p>
     {/if}
   </div>
   
@@ -51,13 +51,13 @@
         type="radio"
         id="games"
         name="permission"
-        class="mt-1"
+        class="mt-1 accent-cyan"
         bind:group={permission}
         value="games"
       />
       <label for="games" class="ml-2 block">
-        <span class="font-medium">Limit to Specific Games</span>
-        <p class="text-sm text-gray-600">Delegate can only interact with games you select</p>
+        <span class="font-medium text-white">Limit to Specific Games</span>
+        <p class="text-sm text-gray-300">Delegate can only interact with games you select</p>
       </label>
     </div>
     
@@ -70,9 +70,9 @@
               id={`game-${game.id}`}
               checked={game.selected}
               on:change={() => toggleGame(game.id)}
-              class="rounded text-solana-purple focus:ring-solana-purple"
+              class="rounded accent-cyan focus:ring-cyan/50"
             />
-            <label for={`game-${game.id}`} class="ml-2 text-gray-700">
+            <label for={`game-${game.id}`} class="ml-2 text-gray-300">
               {game.name}
             </label>
           </div>
@@ -85,13 +85,13 @@
         type="radio"
         id="limited"
         name="permission"
-        class="mt-1"
+        class="mt-1 accent-cyan"
         bind:group={permission}
         value="limited"
       />
       <label for="limited" class="ml-2 block">
-        <span class="font-medium">Limit to Specific Programs</span>
-        <p class="text-sm text-gray-600">Delegate can only interact with programs you select</p>
+        <span class="font-medium text-white">Limit to Specific Programs</span>
+        <p class="text-sm text-gray-300">Delegate can only interact with programs you select</p>
       </label>
     </div>
     
@@ -104,14 +104,14 @@
               id={`program-${program.id}`}
               checked={program.selected}
               on:change={() => toggleProgram(program.id)}
-              class="rounded text-solana-purple focus:ring-solana-purple"
+              class="rounded accent-cyan focus:ring-cyan/50"
             />
-            <label for={`program-${program.id}`} class="ml-2 text-gray-700">
+            <label for={`program-${program.id}`} class="ml-2 text-gray-300">
               {program.name}
             </label>
           </div>
         {/each}
-        <button class="flex items-center text-solana-purple hover:text-purple-800">
+        <button class="flex items-center text-cyan hover:text-cyan/80 transition-colors duration-300">
           <Plus class="w-4 h-4 mr-1" /> Add More
         </button>
       </div>
@@ -122,13 +122,13 @@
         type="radio"
         id="custom"
         name="permission"
-        class="mt-1"
+        class="mt-1 accent-cyan"
         bind:group={permission}
         value="custom"
       />
       <label for="custom" class="ml-2 block">
-        <span class="font-medium">Custom Contract</span>
-        <p class="text-sm text-gray-600">Delegate can only interact with a specific contract</p>
+        <span class="font-medium text-white">Custom Contract</span>
+        <p class="text-sm text-gray-300">Delegate can only interact with a specific contract</p>
       </label>
     </div>
     
@@ -137,7 +137,7 @@
         <input
           type="text"
           placeholder="Enter contract ID"
-          class="input"
+          class="w-full bg-black/10 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan/50 focus:border-cyan/50 transition-all duration-300"
           bind:value={customContract}
         />
       </div>
@@ -148,20 +148,20 @@
         type="radio"
         id="full"
         name="permission"
-        class="mt-1"
+        class="mt-1 accent-cyan"
         bind:group={permission}
         value="full"
       />
       <label for="full" class="ml-2 block">
-        <span class="font-medium">Full Access</span>
-        <p class="text-sm text-gray-600">Delegate can interact with any program (not recommended)</p>
+        <span class="font-medium text-white">Full Access</span>
+        <p class="text-sm text-gray-300">Delegate can interact with any program (not recommended)</p>
       </label>
     </div>
     
     {#if permission === 'full'}
-      <div class="p-3 bg-yellow-50 border border-yellow-200 rounded-md flex items-start">
-        <AlertTriangle class="w-5 h-5 text-yellow-500 mr-2 flex-shrink-0 mt-0.5" />
-        <p class="text-sm text-yellow-700">
+      <div class="p-3 bg-yellow-900/30 border border-yellow-800/30 rounded-xl flex items-start backdrop-blur-sm">
+        <AlertTriangle class="w-5 h-5 text-yellow-400 mr-2 flex-shrink-0 mt-0.5" />
+        <p class="text-sm text-yellow-200">
           Warning: Full access gives this delegate complete control over your wallet for all applications.
           Only use this for trusted delegates.
         </p>
@@ -171,14 +171,14 @@
   
   <div class="flex justify-between">
     <button
-      class="btn btn-secondary flex items-center"
+      class="bg-black/10 text-white px-6 py-2 rounded-xl hover:bg-black/20 transition-all duration-300 backdrop-blur-sm border border-white/10 flex items-center"
       on:click={handleBack}
     >
       <ArrowLeft class="w-4 h-4 mr-2" />
       Back
     </button>
     <button
-      class="btn btn-primary"
+      class="bg-orange text-white px-6 py-2 rounded-xl hover:scale-105 transition-all duration-300 backdrop-blur-sm border border-white/20 hover:bg-orange/90"
       on:click={handleNext}
     >
       Next

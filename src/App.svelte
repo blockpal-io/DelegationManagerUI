@@ -1,4 +1,5 @@
 <script lang="ts">
+<<<<<<< Updated upstream
   import { onMount } from "svelte";
   import {
     availablePrograms,
@@ -227,3 +228,20 @@
     </div>
   {/if}
 </main>
+=======
+  import LandingPage from './lib/components/LandingPage.svelte';
+  import DelegationManager from './lib/components/DelegationManager.svelte';
+  
+  let currentPath = window.location.pathname;
+
+  window.addEventListener('popstate', () => {
+    currentPath = window.location.pathname;
+  });
+</script>
+
+{#if currentPath === '/'}
+  <LandingPage />
+{:else if currentPath === '/app'}
+  <DelegationManager />
+{/if}
+>>>>>>> Stashed changes
