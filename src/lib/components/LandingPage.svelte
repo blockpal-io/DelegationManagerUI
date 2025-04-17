@@ -45,7 +45,7 @@
     <h1 class="font-inter font-bold text-5xl mb-4 relative z-10 text-shadow-lg text-white">The Smart Delegation Edge for Web3 Wallets</h1>
     <h2 class="font-inter text-xl text-orange mb-4 relative z-10 text-shadow-md">Powering gaming, agents, and enhanced security</h2>
     <p class="font-inter text-base max-w-[600px] mb-8 relative z-10 text-shadow-sm bg-black/10 backdrop-blur-md p-6 rounded-xl border border-white/5">
-      Seamless delegation meets intelligent guardrails. Level up your wallet & empower your users with Blockpals B2B API.
+      Seamless delegation meets intelligent guardrails. Level up your wallet and empower your users with Blockpal's B2B API.
     </p>
     <a 
       href="/app" 
