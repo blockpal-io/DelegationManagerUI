@@ -17,12 +17,8 @@
   import DelegationList from "./lib/components/DelegationList.svelte";
   import type { Delegation, Permission } from "./types";
 
-  let currentPath = window.location.pathname;
+  let showDelegationManager = false;
   let view: "list" | "form" = "list";
-
-  window.addEventListener('popstate', () => {
-    currentPath = window.location.pathname;
-  });
 
   // View state
   let step = 1;
@@ -138,6 +134,10 @@
     resetForm();
   }
 
+  function handleStartApp() {
+    showDelegationManager = true;
+  }
+
   // Mock data for development
   onMount(() => {
     // Add some sample delegations for demonstration
@@ -170,8 +170,8 @@
   });
 </script>
 
-{#if currentPath === '/'}
-  <LandingPage />
-{:else if currentPath === '/app'}
+{#if !showDelegationManager}
+  <LandingPage onStart={handleStartApp} />
+{:else}
   <DelegationManager />
 {/if}

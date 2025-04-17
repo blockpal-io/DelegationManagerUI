@@ -1,5 +1,7 @@
 <script lang="ts">
   import { Gamepad2, Bot, Shield, X as XIcon, Plus } from 'lucide-svelte';
+  
+  export let onStart: () => void;
 </script>
 
 <div class="min-h-screen bg-deep-blue text-white relative overflow-hidden">
@@ -47,12 +49,12 @@
     <p class="font-inter text-base max-w-[600px] mb-8 relative z-10 text-shadow-sm bg-black/10 backdrop-blur-md p-6 rounded-xl border border-white/5">
       Seamless delegation meets intelligent guardrails. Level up your wallet and empower your users with Blockpal's B2B API.
     </p>
-    <a 
-      href="/app" 
+    <button 
+      on:click={onStart}
       class="font-inter text-base bg-orange text-white px-8 py-4 rounded-xl w-[200px] hover:scale-105 transition-all duration-300 relative z-10 backdrop-blur-sm border border-white/20 hover:bg-orange/90 animate-cta-pulse"
     >
       Try the Preview
-    </a>
+    </button>
   </section>
 
   <!-- Problem Section -->
