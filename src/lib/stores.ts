@@ -200,18 +200,16 @@ export const commitAllowList = async () => {
     return;
   }
 
-  // delete old allowlist from ipfs
-  try {
-    await ipfsClient.deleteCid(vault.contentHash);
-  } catch (e) {
-    console.error('Error deleting allowlist from ipfs', e);
-  }
-
   const allowList = new AllowList(get(localAllowListData));
 
-  // upload new allowlist
-  const contentHash = await ipfsClient.uploadContent(allowList.toString());
+  const [contentHash] = await Promise.all([
+    ipfsClient.uploadContent(allowList.toString()),
+    ipfsClient
+      .deleteCid(vault.contentHash)
+      .catch(() => console.error('Error deleting allowlist from ipfs'))
+  ]);
 
+  // upload new allowlist
   const { root } = allowList.getUpdateArgs();
   const updateAllowlistIx = createUpdateAllowlistInstruction(
     {

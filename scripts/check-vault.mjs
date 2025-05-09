@@ -1,4 +1,4 @@
-import { AllowList, getContent, Vault } from '@blockpal/vault-x-sdk';
+import { AllowList, Vault, IpfsClient } from '@blockpal/vault-x-sdk';
 import { PublicKey, Connection } from '@solana/web3.js';
 
 const SOLANA_RPC_URL = 'https://api.devnet.solana.com';
@@ -15,6 +15,11 @@ async function main() {
   const vault = await Vault.fromAccountAddress(connection, VAULT_PDA);
 
   console.dir({ vault }, { depth: null });
+
+  if (JSON.stringify(vault.contentHash) === JSON.stringify(Array(32).fill(0))) {
+    console.log('Vault has no content hash');
+    return;
+  }
 
   // Fetch the allowlist content from IPFS
   const content = await ipfsClient.getContent(vault.contentHash).catch(() => '[]');
