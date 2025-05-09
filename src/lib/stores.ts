@@ -2,10 +2,6 @@ import { derived, get, writable } from 'svelte/store';
 import {
   AllowList,
   createUpdateAllowlistInstruction,
-  deleteCid,
-  getContent,
-  initIpfsConfig,
-  uploadContent,
   Vault,
   type AllowListEntry
 } from '@blockpal/vault-x-sdk';
@@ -15,6 +11,7 @@ import storage from './storage';
 import { resolveSolDomain } from './sns';
 import { connection, FOUNDER_KEYPAIR, VAULT_PDA } from './chain';
 import { tick } from 'svelte';
+import { ipfsClient } from './ipfs';
 
 // Available games
 export const availableGames = writable<Program[]>([
@@ -181,10 +178,8 @@ export const loadDelegationsFromStorage = async () => {
 
 export const getAllowListFromVault = async (vault?: Vault) => {
   if (!vault) vault = await getVault();
-  await initIpfsConfig({
-    apiKey: 'D8fVcXcRuWlnfg8x7X1xXAIIysuoYGLX'
-  });
-  const content = await getContent(vault.contentHash)
+  const content = await ipfsClient
+    .getContent(vault.contentHash)
     // if error, return empty array
     .catch(() => '[]');
   // go through AllowList class to make sure it's in the correct order
@@ -205,20 +200,17 @@ export const commitAllowList = async () => {
     return;
   }
 
-  // // delete old allowlist from ipfs
-  // try {
-  //   await deleteCid(vault.contentHash);
-  // } catch (e) {
-  //   console.error('Error deleting allowlist from ipfs', e);
-  // }
+  // delete old allowlist from ipfs
+  try {
+    await ipfsClient.deleteCid(vault.contentHash);
+  } catch (e) {
+    console.error('Error deleting allowlist from ipfs', e);
+  }
 
   const allowList = new AllowList(get(localAllowListData));
 
   // upload new allowlist
-  await initIpfsConfig({
-    apiKey: 'D8fVcXcRuWlnfg8x7X1xXAIIysuoYGLX'
-  });
-  const contentHash = await uploadContent(allowList.toString());
+  const contentHash = await ipfsClient.uploadContent(allowList.toString());
 
   const { root } = allowList.getUpdateArgs();
   const updateAllowlistIx = createUpdateAllowlistInstruction(

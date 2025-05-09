@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@blockpal/vault-x-sdk':
-        specifier: ^0.4.0
-        version: 0.4.0(bufferutil@4.0.9)(eslint@8.57.1)(fastestsmallesttextencoderdecoder@1.0.22)(utf-8-validate@5.0.10)
+        specifier: ^0.5.0
+        version: 0.5.0(bufferutil@4.0.9)(eslint@8.57.1)(fastestsmallesttextencoderdecoder@1.0.22)(utf-8-validate@5.0.10)
       '@bonfida/spl-name-service':
         specifier: ^3.0.10
         version: 3.0.10(@solana/web3.js@1.98.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3)(utf-8-validate@5.0.10)
@@ -150,8 +150,8 @@ packages:
     resolution: {integrity: sha512-+EzkxvLNfiUeKMgy/3luqfsCWFRXLb7U6wNQTk60tovuckwB15B191tJWvpp4HjiQWdJkCxO3Wbvc6jlk3Xb2Q==}
     engines: {node: '>=6.9.0'}
 
-  '@blockpal/vault-x-sdk@0.4.0':
-    resolution: {integrity: sha512-dRyZJoEw3Z55OQgms3CMUOzamHWLRRDzQEB0Rel2jh19eN8JoVyHc3vC3JXFBDgI67fI9VnMdcHzRUjhz7U8WA==}
+  '@blockpal/vault-x-sdk@0.5.0':
+    resolution: {integrity: sha512-ob1RFjCMFfUypXvyIsF2XzkatvhStKEr5p8BJb2Al7XuJcxj+A87M5Cy8zKkPQq0to6idkphQpxZHuem0Yhydg==}
 
   '@bonfida/sns-records@0.0.1':
     resolution: {integrity: sha512-i28w9+BMFufhhpmLQCNx1CKKXTsEn+5RT18VFpPqdGO3sqaYlnUWC1m3wDpOvlzGk498dljgRpRo5wmcsnuEMg==}
@@ -2430,7 +2430,7 @@ snapshots:
       '@babel/helper-validator-identifier': 7.27.1
     optional: true
 
-  '@blockpal/vault-x-sdk@0.4.0(bufferutil@4.0.9)(eslint@8.57.1)(fastestsmallesttextencoderdecoder@1.0.22)(utf-8-validate@5.0.10)':
+  '@blockpal/vault-x-sdk@0.5.0(bufferutil@4.0.9)(eslint@8.57.1)(fastestsmallesttextencoderdecoder@1.0.22)(utf-8-validate@5.0.10)':
     dependencies:
       '@metaplex-foundation/beet': 0.7.1
       '@metaplex-foundation/beet-solana': 0.4.0(bufferutil@4.0.9)(typescript@4.9.5)(utf-8-validate@5.0.10)
