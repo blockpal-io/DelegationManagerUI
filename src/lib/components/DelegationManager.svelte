@@ -144,13 +144,14 @@
         ],
         games: $availableGames.map(g => ({ ...g, selected: false }))
       }),
-      addDelegation({
-        address: 'bonfida.sol',
-          nickname: 'Mobile Wallet',
-          permission: 'full',
-          programs: $availablePrograms.map(p => ({ ...p, selected: false })),
-          games: $availableGames.map(g => ({ ...g, selected: false }))
-        })
+      // TODO sol addresses don't work yet
+      // addDelegation({
+      //   address: 'wallet.sol',
+      //     nickname: 'Mobile Wallet',
+      //     permission: 'full',
+      //     programs: $availablePrograms.map(p => ({ ...p, selected: false })),
+      //     games: $availableGames.map(g => ({ ...g, selected: false }))
+      //   })
       ]);
   }
 
