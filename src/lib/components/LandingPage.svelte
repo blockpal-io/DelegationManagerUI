@@ -161,7 +161,7 @@
   </footer>
 </div>
 
-<style>
+<style lang="postcss">
   /* Custom styles */
   .problem-icon, .solution-icon {
     @apply relative w-16 h-16 flex items-center justify-center border rounded-xl transition-all duration-300;
@@ -180,7 +180,7 @@
     }
   }
 
-  .animate-solution-glow {
+  :global(.animate-solution-glow) {
     animation: solution-glow 4s ease-in-out infinite;
   }
 

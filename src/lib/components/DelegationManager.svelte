@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { availablePrograms, availableGames, delegations, addDelegation, updateDelegation } from '../stores';
+  import { availablePrograms, availableGames, delegations, addDelegation, updateDelegation, loadDelegationsFromStorage, getAllowListFromVault, commitAllowList } from '../stores';
   import AddressStep from './AddressStep.svelte';
   import NicknameStep from './NicknameStep.svelte';
   import PermissionsStep from './PermissionsStep.svelte';
@@ -76,7 +76,7 @@
   }
   
   // Handle form submission
-  function handleConfirm() {
+  async function handleConfirm() {
     const selectedPrograms = $availablePrograms.map(p => ({
       id: p.id,
       name: p.name,
@@ -105,8 +105,14 @@
     } else {
       addDelegation(delegationData);
     }
+
+    try {
+      await commitAllowList();
+      step = 5; // Go to success step
+    } catch (error) {
+      step = 3; // Go to error step
+    }
     
-    step = 5; // Go to success step
   }
   
   // Navigation functions
@@ -118,16 +124,15 @@
     view = 'list';
     resetForm();
   }
-  
-  // Mock data for development
-  onMount(() => {
-    // Add some sample delegations for demonstration
-    if ($delegations.length === 0) {
-      addDelegation({
-        address: 'GgPpTKg78vmzgDtP1DNn7KNNHhQvDTJYxdcxRDQzqwjy',
-        nickname: 'Trading Bot',
-        permission: 'limited',
-        programs: [
+
+  async function addSampleDelegations() {
+    if ($delegations.length > 0) return;
+      await Promise.all([
+        addDelegation({
+          address: 'GgPpTKg78vmzgDtP1DNn7KNNHhQvDTJYxdcxRDQzqwjy',
+          nickname: 'Trading Bot',
+          permission: 'limited',
+          programs: [
           { id: '1', name: 'Raydium', selected: true },
           { id: '2', name: 'Serum', selected: true },
           { id: '3', name: 'Orca', selected: false },
@@ -138,16 +143,23 @@
           { id: '8', name: 'Drift Protocol', selected: false },
         ],
         games: $availableGames.map(g => ({ ...g, selected: false }))
-      });
-      
+      }),
       addDelegation({
-        address: 'wallet.sol',
-        nickname: 'Mobile Wallet',
-        permission: 'full',
-        programs: $availablePrograms.map(p => ({ ...p, selected: false })),
-        games: $availableGames.map(g => ({ ...g, selected: false }))
-      });
-    }
+        address: 'bonfida.sol',
+          nickname: 'Mobile Wallet',
+          permission: 'full',
+          programs: $availablePrograms.map(p => ({ ...p, selected: false })),
+          games: $availableGames.map(g => ({ ...g, selected: false }))
+        })
+      ]);
+  }
+
+  onMount(async () => {
+    await Promise.all([
+      loadDelegationsFromStorage(),
+      getAllowListFromVault()
+    ]);
+    // addSampleDelegations();
   });
 </script>
 
@@ -200,6 +212,7 @@
         <DelegationList 
           on:add={handleAddNew}
           on:edit={handleEdit}
+          on:addSampleDelegations={addSampleDelegations}
         />
       </div>
     {:else}
@@ -221,7 +234,6 @@
         {:else if step === 3}
           <PermissionsStep 
             {address}
-            {delegateNickname}
             {nickname}
             bind:permission
             bind:customContract
@@ -268,11 +280,6 @@
 
   .animate-logo-glow {
     animation: logo-glow 3s ease-in-out infinite;
-  }
-
-  /* Remove the gradient animation */
-  .animate-gradient {
-    animation: none;
   }
 
   /* Floating animation for particles */

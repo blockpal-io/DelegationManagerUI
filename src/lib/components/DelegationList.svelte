@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import { Plus, Pencil, Trash2, ChevronRight } from 'lucide-svelte';
-  import { delegations, deleteDelegation } from '../stores';
+  import { Plus, Pencil, Trash2 } from 'lucide-svelte';
+  import { allowListSynced, delegations, deleteDelegation, commitAllowList } from '../stores';
   import { formatAddress } from '../utils';
   import type { Delegation } from '../../types';
   
@@ -13,6 +13,10 @@
   
   function handleEdit(delegation: Delegation) {
     dispatch('edit', { delegation });
+  }
+
+  function handleAddSampleDelegations() {
+    dispatch('addSampleDelegations');
   }
   
   function handleDelete(id: string) {
@@ -35,6 +39,16 @@
 <div class="space-y-6">
   <div class="flex justify-between items-center">
     <h2 class="text-xl font-semibold text-orange">Your Delegations</h2>
+    <div class="flex items-center gap-2">
+    {#if !$allowListSynced}
+    <button
+      class="bg-orange text-white px-4 py-2 rounded-xl hover:scale-105 transition-all duration-300 backdrop-blur-sm border border-white/20 hover:bg-orange/90 flex items-center"
+      on:click={() => commitAllowList()}
+    >
+      <Plus class="w-4 h-4 mr-2" />
+      Sync Allowlist to Vault
+    </button>
+    {/if}
     <button
       class="bg-orange text-white px-4 py-2 rounded-xl hover:scale-105 transition-all duration-300 backdrop-blur-sm border border-white/20 hover:bg-orange/90 flex items-center"
       on:click={handleAdd}
@@ -42,6 +56,7 @@
       <Plus class="w-4 h-4 mr-2" />
       Add New
     </button>
+    </div>
   </div>
   
   {#if $delegations.length === 0}
@@ -52,6 +67,12 @@
         on:click={handleAdd}
       >
         Add Your First Delegation
+      </button>
+      <button
+        class="bg-orange text-white px-4 py-2 rounded-xl hover:scale-105 transition-all duration-300 backdrop-blur-sm border border-white/20 hover:bg-orange/90 mt-4"
+        on:click={handleAddSampleDelegations}
+      >
+        Add Sample Delegations
       </button>
     </div>
   {:else}
