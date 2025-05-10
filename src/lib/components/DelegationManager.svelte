@@ -1,6 +1,15 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { availablePrograms, availableGames, delegations, addDelegation, updateDelegation, loadDelegationsFromStorage, getAllowListFromVault, commitAllowList } from '../stores';
+  import {
+    availablePrograms,
+    availableGames,
+    delegations,
+    addDelegation,
+    updateDelegation,
+    loadDelegationsFromStorage,
+    getAllowListFromVault,
+    commitAllowList
+  } from '../stores';
   import AddressStep from './AddressStep.svelte';
   import NicknameStep from './NicknameStep.svelte';
   import PermissionsStep from './PermissionsStep.svelte';
@@ -9,23 +18,23 @@
   import DelegationList from './DelegationList.svelte';
   import type { Delegation, Permission } from '../../types';
   import blockpalLogoNew from '../images/blockpal-logo-new.png';
-  
+
   // View state
   let view: 'list' | 'form' = 'list';
   let step = 1;
-  
+
   // Form data
   let address = '';
   let nickname = '';
   let delegateNickname = '';
   let permission: Permission = 'games';
   let customContract = '';
-  let additionalDelegates: { address: string; nickname: string; }[] = [];
-  
+  let additionalDelegates: { address: string; nickname: string }[] = [];
+
   // Editing state
   let isEditing = false;
   let editingId: string | null = null;
-  
+
   // Reset form
   function resetForm() {
     address = '';
@@ -34,62 +43,62 @@
     permission = 'games';
     customContract = '';
     additionalDelegates = [];
-    $availablePrograms = $availablePrograms.map(p => ({ ...p, selected: false }));
-    $availableGames = $availableGames.map(g => ({ ...g, selected: false }));
+    $availablePrograms = $availablePrograms.map((p) => ({ ...p, selected: false }));
+    $availableGames = $availableGames.map((g) => ({ ...g, selected: false }));
     isEditing = false;
     editingId = null;
     step = 1;
   }
-  
+
   // Start adding new delegation
   function handleAddNew() {
     resetForm();
     view = 'form';
   }
-  
+
   // Edit existing delegation
   function handleEdit(event: CustomEvent) {
     const delegation: Delegation = event.detail.delegation;
-    
+
     address = delegation.address;
     nickname = delegation.nickname || '';
     delegateNickname = delegation.delegateNickname || '';
     permission = delegation.permission;
     customContract = delegation.customContract || '';
     additionalDelegates = delegation.additionalDelegates || [];
-    
+
     // Reset programs and set selected ones
-    $availablePrograms = $availablePrograms.map(p => ({
+    $availablePrograms = $availablePrograms.map((p) => ({
       ...p,
-      selected: delegation.programs.some(dp => dp.id === p.id && dp.selected)
+      selected: delegation.programs.some((dp) => dp.id === p.id && dp.selected)
     }));
 
     // Reset games and set selected ones
-    $availableGames = $availableGames.map(g => ({
+    $availableGames = $availableGames.map((g) => ({
       ...g,
-      selected: delegation.games?.some(dg => dg.id === g.id && dg.selected) || false
+      selected: delegation.games?.some((dg) => dg.id === g.id && dg.selected) || false
     }));
-    
+
     isEditing = true;
     editingId = delegation.id;
     view = 'form';
     step = 1;
   }
-  
+
   // Handle form submission
   async function handleConfirm() {
-    const selectedPrograms = $availablePrograms.map(p => ({
+    const selectedPrograms = $availablePrograms.map((p) => ({
       id: p.id,
       name: p.name,
       selected: p.selected
     }));
 
-    const selectedGames = $availableGames.map(g => ({
+    const selectedGames = $availableGames.map((g) => ({
       id: g.id,
       name: g.name,
       selected: g.selected
     }));
-    
+
     const delegationData = {
       address,
       nickname: nickname || undefined,
@@ -98,9 +107,9 @@
       programs: selectedPrograms,
       games: selectedGames,
       customContract: permission === 'custom' ? customContract : undefined,
-      additionalDelegates: additionalDelegates.length > 0 ? additionalDelegates : undefined,
+      additionalDelegates: additionalDelegates.length > 0 ? additionalDelegates : undefined
     };
-    
+
     if (isEditing && editingId) {
       updateDelegation(editingId, delegationData);
     } else {
@@ -113,14 +122,13 @@
     } catch (error) {
       step = 3; // Go to error step
     }
-    
   }
-  
+
   // Navigation functions
   function goToStep(newStep: number) {
     step = newStep;
   }
-  
+
   function goToList() {
     view = 'list';
     resetForm();
@@ -128,12 +136,12 @@
 
   async function addSampleDelegations() {
     if ($delegations.length > 0) return;
-      await Promise.all([
-        addDelegation({
-          address: 'GgPpTKg78vmzgDtP1DNn7KNNHhQvDTJYxdcxRDQzqwjy',
-          nickname: 'Trading Bot',
-          permission: 'limited',
-          programs: [
+    await Promise.all([
+      addDelegation({
+        address: 'GgPpTKg78vmzgDtP1DNn7KNNHhQvDTJYxdcxRDQzqwjy',
+        nickname: 'Trading Bot',
+        permission: 'limited',
+        programs: [
           { id: '1', name: 'Raydium', selected: true },
           { id: '2', name: 'Serum', selected: true },
           { id: '3', name: 'Orca', selected: false },
@@ -141,10 +149,10 @@
           { id: '5', name: 'Marinade', selected: false },
           { id: '6', name: 'Solend', selected: false },
           { id: '7', name: 'Mango Markets', selected: false },
-          { id: '8', name: 'Drift Protocol', selected: false },
+          { id: '8', name: 'Drift Protocol', selected: false }
         ],
-        games: $availableGames.map(g => ({ ...g, selected: false }))
-      }),
+        games: $availableGames.map((g) => ({ ...g, selected: false }))
+      })
       // TODO sol addresses don't work yet
       // addDelegation({
       //   address: 'wallet.sol',
@@ -153,14 +161,11 @@
       //     programs: $availablePrograms.map(p => ({ ...p, selected: false })),
       //     games: $availableGames.map(g => ({ ...g, selected: false }))
       //   })
-      ]);
+    ]);
   }
 
   onMount(async () => {
-    await Promise.all([
-      loadDelegationsFromStorage(),
-      getAllowListFromVault()
-    ]);
+    await Promise.all([loadDelegationsFromStorage(), getAllowListFromVault()]);
     // addSampleDelegations();
   });
 </script>
@@ -168,11 +173,11 @@
 <div class="min-h-screen bg-deep-blue text-white relative overflow-hidden">
   <!-- Static Background -->
   <div class="fixed inset-0 bg-deep-blue"></div>
-  
+
   <!-- Modern Hex Grid Overlay with Energy Pulses -->
   <div class="fixed inset-0 pointer-events-none hex-grid">
     {#each Array(15) as _, i}
-      <div 
+      <div
         class="hex-cell"
         style="
           left: {Math.random() * 100}%;
@@ -190,9 +195,10 @@
   <!-- Animated Particles -->
   <div class="fixed inset-0 pointer-events-none" style="z-index: 3;">
     {#each Array(20) as _, i}
-      <div 
+      <div
         class="absolute w-1 h-1 bg-cyan/20 rounded-full animate-float"
-        style="left: {Math.random() * 100}%; top: {Math.random() * 100}%; animation-delay: {i * 0.5}s;"
+        style="left: {Math.random() * 100}%; top: {Math.random() * 100}%; animation-delay: {i *
+          0.5}s;"
       ></div>
     {/each}
   </div>
@@ -203,15 +209,17 @@
         <img
           alt="Blockpal Logo"
           class="h-72 w-auto drop-shadow-[0_0_4px_rgba(0,255,255,0.1)] animate-logo-glow transition-transform duration-300 group-hover:scale-105"
-          src="{blockpalLogoNew}"
+          src={blockpalLogoNew}
         />
       </a>
-      <h1 class="font-inter font-bold text-5xl text-center text-shadow-lg">Wallet Delegation Manager</h1>
+      <h1 class="font-inter font-bold text-5xl text-center text-shadow-lg">
+        Wallet Delegation Manager
+      </h1>
     </header>
-    
+
     {#if view === 'list'}
       <div class="bg-black/10 backdrop-blur-md rounded-xl border border-white/5 p-6">
-        <DelegationList 
+        <DelegationList
           on:add={handleAddNew}
           on:edit={handleEdit}
           on:addSampleDelegations={addSampleDelegations}
@@ -220,13 +228,9 @@
     {:else}
       <div class="bg-black/10 backdrop-blur-md rounded-xl border border-white/5 p-6">
         {#if step === 1}
-          <NicknameStep 
-            bind:nickname
-            on:next={() => goToStep(2)}
-            on:cancel={goToList}
-          />
+          <NicknameStep bind:nickname on:next={() => goToStep(2)} on:cancel={goToList} />
         {:else if step === 2}
-          <AddressStep 
+          <AddressStep
             bind:address
             bind:delegateNickname
             bind:additionalDelegates
@@ -234,7 +238,7 @@
             on:next={() => goToStep(3)}
           />
         {:else if step === 3}
-          <PermissionsStep 
+          <PermissionsStep
             {address}
             {nickname}
             bind:permission
@@ -243,7 +247,7 @@
             on:next={() => goToStep(4)}
           />
         {:else if step === 4}
-          <ConfirmStep 
+          <ConfirmStep
             {address}
             {delegateNickname}
             {nickname}
@@ -254,7 +258,7 @@
             on:confirm={handleConfirm}
           />
         {:else if step === 5}
-          <SuccessStep 
+          <SuccessStep
             {isEditing}
             on:done={goToList}
             on:addAnother={() => {
@@ -271,7 +275,8 @@
 <style>
   /* Logo glow animation */
   @keyframes logo-glow {
-    0%, 100% {
+    0%,
+    100% {
       filter: drop-shadow(0 0 4px rgba(0, 255, 255, 0.1));
     }
     50% {
@@ -285,7 +290,8 @@
 
   /* Floating animation for particles */
   @keyframes float {
-    0%, 100% {
+    0%,
+    100% {
       transform: translateY(0) translateX(0);
     }
     25% {
@@ -321,12 +327,14 @@
   }
 
   @keyframes pulse {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 0;
       filter: drop-shadow(0 0 0 rgba(0, 156, 221, 0));
       transform: scale(1);
     }
-    10%, 25% {
+    10%,
+    25% {
       opacity: 0.7;
       filter: drop-shadow(0 0 30px rgba(0, 156, 221, 0.8));
       transform: scale(1.3);

@@ -7,7 +7,6 @@
   function handleStartApp() {
     showDelegationManager = true;
   }
-
 </script>
 
 {#if !showDelegationManager}
