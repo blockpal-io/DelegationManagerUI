@@ -45,7 +45,7 @@ async function main() {
   await sendAndConfirmTransaction(connection, transaction, [creator, createKey]);
 
   console.log('Vault PDA:', vaultPda.toBase58());
-  console.log('update src/lib/chain.ts with the new vault PDA:');
+  console.log('update src/lib/demo.ts with the new vault PDA:');
   console.log(`const VAULT_PDA = new PublicKey('${vaultPda.toBase58()}');`);
 }
 

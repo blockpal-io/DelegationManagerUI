@@ -27,7 +27,7 @@ console.log('  https://faucet.solana.com/');
 console.log(`\nPublic Key: ${keypair.publicKey.toBase58()}`);
 console.log('\nPaste your public key into the faucet to receive devnet SOL.');
 
-console.log('Update and FOUNDER_KEY in src/lib/chain.ts to use your new keypair.');
+console.log('Update and FOUNDER_KEYPAIR in src/lib/demo.ts to use your new keypair.');
 console.log(
   `const FOUNDER_KEYPAIR = Keypair.fromSecretKey(new Uint8Array([${keypair.secretKey.join(',')}]));`
 );

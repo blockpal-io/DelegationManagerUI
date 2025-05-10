@@ -1,6 +1,7 @@
-import { Connection, Keypair, PublicKey } from '@solana/web3.js';
+import { Keypair, PublicKey } from '@solana/web3.js';
 
 // TODO: this is completely unsafe and temporary, remove this
+
 // NOTE: you can generate a new keypair with `pnpm run dev:keypair`
 export const FOUNDER_KEYPAIR = Keypair.fromSecretKey(
   new Uint8Array([
@@ -12,7 +13,3 @@ export const FOUNDER_KEYPAIR = Keypair.fromSecretKey(
 );
 // NOTE: you can create a new vault with `pnpm run dev:vault`
 export const VAULT_PDA = new PublicKey('3Lo83MPkZi6cwBwBW6ysBfb2sv3Mz4Rv8rtfjWQeVkjx');
-
-// TODO: this should also be handled by the wallet, here just for demo purposes
-export const SOLANA_RPC_URL = 'https://api.devnet.solana.com';
-export const connection = new Connection(SOLANA_RPC_URL);

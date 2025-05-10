@@ -1,7 +1,13 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import { Plus, Pencil, Trash2 } from 'lucide-svelte';
-  import { allowListSynced, delegations, deleteDelegation, commitAllowList } from '../stores';
+  import { Plus, Pencil, Trash2, ArrowUp, ArrowDown } from 'lucide-svelte';
+  import {
+    allowListSynced,
+    delegations,
+    deleteDelegation,
+    commitAllowList,
+    loadDelegationsFromVault
+  } from '../stores';
   import { formatAddress } from '../utils';
   import type { Delegation } from '../../types';
 
@@ -42,18 +48,21 @@
 </script>
 
 <div class="space-y-6">
-  <div class="flex justify-between items-center">
+  <div class="flex justify-between gap-4 items-center">
     <h2 class="text-xl font-semibold text-orange">Your Delegations</h2>
-    <div class="flex items-center gap-2">
+    <div
+      class="flex flex-wrap sm:flex-nowrap flex-col sm:flex-row justify-end gap-2 w-full sm:w-auto"
+    >
       {#if !$allowListSynced}
         <button
           class="bg-orange text-white px-4 py-2 rounded-xl hover:scale-105 transition-all duration-300 backdrop-blur-sm border border-white/20 hover:bg-orange/90 flex items-center"
           on:click={() => commitAllowList()}
         >
-          <Plus class="w-4 h-4 mr-2" />
-          Sync Allowlist to Vault
+          <ArrowUp class="w-4 h-4 mr-2" />
+          Sync <b class="mx-1">TO</b> Vault
         </button>
       {/if}
+
       <button
         class="bg-orange text-white px-4 py-2 rounded-xl hover:scale-105 transition-all duration-300 backdrop-blur-sm border border-white/20 hover:bg-orange/90 flex items-center"
         on:click={handleAdd}
@@ -61,6 +70,15 @@
         <Plus class="w-4 h-4 mr-2" />
         Add New
       </button>
+      {#if !$allowListSynced}
+        <button
+          class="bg-orange text-white px-4 py-2 rounded-xl hover:scale-105 transition-all duration-300 backdrop-blur-sm border border-white/20 hover:bg-orange/90 flex items-center"
+          on:click={() => loadDelegationsFromVault()}
+        >
+          <ArrowDown class="w-4 h-4 mr-2" />
+          Sync <b class="mx-1">FROM</b> Vault
+        </button>
+      {/if}
     </div>
   </div>
 

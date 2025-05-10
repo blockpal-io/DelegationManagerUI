@@ -3,7 +3,7 @@ import {
   getNameAccountKeySync,
   NameRegistryState
 } from '@bonfida/spl-name-service';
-import { connection } from './chain';
+import { connection } from './connection';
 import { PublicKey } from '@solana/web3.js';
 
 export async function resolveSolDomain(domain: string): Promise<PublicKey | null> {

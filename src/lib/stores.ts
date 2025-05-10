@@ -5,13 +5,15 @@ import {
   Vault,
   type AllowListEntry
 } from '@blockpal/vault-x-sdk';
-import { PublicKey, sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
+import { PublicKey, Transaction } from '@solana/web3.js';
 import type { Delegation, Program } from '../types';
 import storage from './storage';
 import { resolveSolDomain } from './sns';
-import { connection, FOUNDER_KEYPAIR, VAULT_PDA } from './chain';
+import { connection } from './connection';
+import { VAULT_PDA } from './demo';
 import { tick } from 'svelte';
 import { ipfsClient } from './ipfs';
+import universalWallet from './universalWallet';
 
 // Available games
 export const availableGames = writable<Program[]>([
@@ -200,20 +202,25 @@ export const commitAllowList = async () => {
     return;
   }
 
+  const oldContentHash = vault.contentHash;
+
   const allowList = new AllowList(get(localAllowListData));
 
-  const [contentHash] = await Promise.all([
-    ipfsClient.uploadContent(allowList.toString()),
-    ipfsClient
-      .deleteCid(vault.contentHash)
-      .catch(() => console.error('Error deleting allowlist from ipfs'))
-  ]);
-
   // upload new allowlist
-  const { root } = allowList.getUpdateArgs();
+  let contentHash: number[];
+  let { root } = allowList.getUpdateArgs();
+  // TODO fix this in SDK => empty root should be Array(32).fill(0)
+  if (root[0] === undefined) {
+    root = Array(32).fill(0);
+    contentHash = root;
+  } else {
+    // TODO: we shouldn't really expose the IpfsClient at in the SDK
+    contentHash = await ipfsClient.uploadContent(allowList.toString());
+  }
+
   const updateAllowlistIx = createUpdateAllowlistInstruction(
     {
-      founder: FOUNDER_KEYPAIR.publicKey,
+      founder: universalWallet.publicKey,
       vault: VAULT_PDA
     },
     {
@@ -225,12 +232,120 @@ export const commitAllowList = async () => {
   );
   try {
     const transaction = new Transaction().add(updateAllowlistIx);
-    await sendAndConfirmTransaction(connection, transaction, [FOUNDER_KEYPAIR]);
+    await universalWallet.signAndSendTransaction(transaction, connection);
     console.log('Allowlist updated');
+    await ipfsClient
+      .deleteCid(oldContentHash)
+      .then(() => console.log('Old allowlist deleted'))
+      .catch(() => console.error('Error deleting old allowlist from ipfs'));
   } catch (error) {
     console.error('Error updating allowlist', error);
     throw error;
   }
+};
+
+// TODO we dont save "seen" delegations to storage so this won't ever work well
+export const loadDelegationsFromVault = async () => {
+  // Ensure vault is synced
+  await getAllowListFromVault();
+  await tick();
+  // Get the current vault allowlist
+  const vaultEntries = get(vaultAllowListData) as AllowListEntry[];
+  // Get local delegations from storage
+  const localDelegations = (await getDelegationsFromStorage()) ?? [];
+
+  // Helper: reverse lookup for program and game ids
+  const programIdToMeta = Object.entries(programIds).reduce(
+    (acc, [id, address]) => {
+      acc[address] = id;
+      return acc;
+    },
+    {} as Record<string, string>
+  );
+
+  // Get available programs/games (for name mapping)
+  let programsList: Program[] = [];
+  let gamesList: Program[] = [];
+  availablePrograms.subscribe((p) => (programsList = p))();
+  availableGames.subscribe((g) => (gamesList = g))();
+
+  // Helper to map allowedList to permission/programs/games/customContract
+  function mapAllowedList(allowedList: string[]): {
+    permission: string;
+    programs: Program[];
+    games: Program[];
+    customContract?: string;
+  } {
+    if (!allowedList || allowedList.length === 0) {
+      return { permission: 'full', programs: [], games: [] };
+    }
+    // Check if all are known program addresses
+    const allPrograms = allowedList.every(
+      (addr) => programIdToMeta[addr] && programIdToMeta[addr].match(/^\d+$/)
+    );
+    if (allPrograms) {
+      const selectedPrograms = programsList.map((p) => ({
+        ...p,
+        selected: allowedList.includes(programIds[p.id])
+      }));
+      return { permission: 'limited', programs: selectedPrograms, games: [] };
+    }
+    // Check if all are known game addresses
+    const allGames = allowedList.every(
+      (addr) => programIdToMeta[addr] && programIdToMeta[addr].startsWith('g')
+    );
+    if (allGames) {
+      const selectedGames = gamesList.map((g) => ({
+        ...g,
+        selected: allowedList.includes(programIds[g.id])
+      }));
+      return { permission: 'games', programs: [], games: selectedGames };
+    }
+    // If single entry and not a known program/game, treat as custom contract
+    if (allowedList.length === 1 && !programIdToMeta[allowedList[0]]) {
+      return { permission: 'custom', programs: [], games: [], customContract: allowedList[0] };
+    }
+    // Fallback: treat as limited, mark what we can
+    const selectedPrograms = programsList.map((p) => ({
+      ...p,
+      selected: allowedList.includes(programIds[p.id])
+    }));
+    return { permission: 'limited', programs: selectedPrograms, games: [] };
+  }
+
+  // Build new delegations array
+  const newDelegations = vaultEntries.map(([address, allowedList]) => {
+    // Try to find a matching local delegation (by address and allowedList)
+    const local = localDelegations.find(
+      (d) =>
+        d.address === address &&
+        ((d.permission === 'full' && (!allowedList || allowedList.length === 0)) ||
+          (d.permission === 'custom' && d.customContract === allowedList[0]) ||
+          (d.permission === 'limited' &&
+            d.programs
+              .filter((p) => p.selected)
+              .map((p) => programIds[p.id])
+              .sort()
+              .join(',') === [...allowedList].sort().join(',')))
+    );
+    const { permission, programs, games, customContract } = mapAllowedList(allowedList as string[]);
+    return {
+      id: local?.id || crypto.randomUUID(),
+      address: address.toString(),
+      nickname: local?.nickname,
+      delegateNickname: local?.delegateNickname,
+      permission: permission as any,
+      programs,
+      games,
+      customContract,
+      additionalDelegates: local?.additionalDelegates,
+      createdAt: local?.createdAt ? new Date(local.createdAt) : new Date()
+    };
+  });
+
+  delegations.set(newDelegations);
+  // Persist to storage
+  persistDelegationsToStorage(newDelegations);
 };
 
 // Debug: Log all stores and derived stores whenever they change
