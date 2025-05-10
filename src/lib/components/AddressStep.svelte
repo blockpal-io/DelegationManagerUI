@@ -83,10 +83,11 @@
             </button>
             
             <div class="space-y-2">
-              <label class="block text-sm font-medium text-gray-300">
+              <label for="delegateAddress" class="block text-sm font-medium text-gray-300">
                 Delegate Address
               </label>
               <input
+                id="delegateAddress"
                 type="text"
                 class="w-full bg-black/10 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan/50 focus:border-cyan/50 transition-all duration-300"
                 placeholder="Enter Solana address or .sol name"
@@ -95,10 +96,11 @@
             </div>
 
             <div class="space-y-2">
-              <label class="block text-sm font-medium text-gray-300">
+              <label for="delegateNickname" class="block text-sm font-medium text-gray-300">
                 Delegate Nickname (Optional)
               </label>
               <input
+                id="delegateNickname"
                 type="text"
                 class="w-full bg-black/10 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan/50 focus:border-cyan/50 transition-all duration-300"
                 placeholder="E.g., John's Wallet, Trading Account"

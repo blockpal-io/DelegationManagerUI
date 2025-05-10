@@ -249,7 +249,6 @@
             {nickname}
             {permission}
             {additionalDelegates}
-            programs={$availablePrograms}
             {customContract}
             on:back={() => goToStep(3)}
             on:confirm={handleConfirm}

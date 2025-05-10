@@ -3,13 +3,12 @@
   import { createEventDispatcher } from 'svelte';
   import { ArrowLeft } from 'lucide-svelte';
   import { availablePrograms, availableGames } from '../stores';
-  import type { Permission, Program } from '../../types';
+  import type { Permission } from '../../types';
   
   export let address = '';
   export let nickname = '';
   export let delegateNickname = '';
   export let permission: Permission = 'limited';
-  export let programs: Program[] = [];
   export let customContract = '';
   export let additionalDelegates: { address: string; nickname: string; }[] = [];
   
