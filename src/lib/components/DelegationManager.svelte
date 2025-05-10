@@ -8,6 +8,7 @@
   import SuccessStep from './SuccessStep.svelte';
   import DelegationList from './DelegationList.svelte';
   import type { Delegation, Permission } from '../../types';
+  import blockpalLogoNew from '../images/blockpal-logo-new.png';
   
   // View state
   let view: 'list' | 'form' = 'list';
@@ -202,7 +203,7 @@
         <img
           alt="Blockpal Logo"
           class="h-72 w-auto drop-shadow-[0_0_4px_rgba(0,255,255,0.1)] animate-logo-glow transition-transform duration-300 group-hover:scale-105"
-          src="/images/blockpal-logo-new.png"
+          src="{blockpalLogoNew}"
         />
       </a>
       <h1 class="font-inter font-bold text-5xl text-center text-shadow-lg">Wallet Delegation Manager</h1>

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Gamepad2, Bot, Shield, X as XIcon, Plus } from 'lucide-svelte';
+  import blockpalLogoNew from '../images/blockpal-logo-new.png';
   
   export let onStart: () => void;
 </script>
@@ -40,7 +41,7 @@
   <section class="relative min-h-screen flex flex-col items-center justify-center text-center px-4">
     <div class="absolute inset-0 bg-gradient-radial from-cyan/20 to-transparent opacity-30"></div>
     <img 
-      src="/images/blockpal-logo-new.png" 
+      src="{blockpalLogoNew}"
       alt="Blockpal Logo" 
       class="h-72 w-auto mb-8 relative z-10 object-contain drop-shadow-[0_0_4px_rgba(0,255,255,0.1)] animate-logo-glow" 
     />
