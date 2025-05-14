@@ -1,36 +1,34 @@
-
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import { ArrowLeft } from 'lucide-svelte';
   import { availablePrograms, availableGames } from '../stores';
-  import type { Permission, Program } from '../../types';
-  
+  import type { Permission } from '../../types';
+
   export let address = '';
   export let nickname = '';
   export let delegateNickname = '';
   export let permission: Permission = 'limited';
-  export let programs: Program[] = [];
   export let customContract = '';
-  export let additionalDelegates: { address: string; nickname: string; }[] = [];
-  
+  export let additionalDelegates: { address: string; nickname: string }[] = [];
+
   const dispatch = createEventDispatcher();
-  
+
   function handleBack() {
     dispatch('back');
   }
-  
+
   function handleConfirm() {
     dispatch('confirm');
   }
-  
-  $: selectedPrograms = $availablePrograms.filter(p => p.selected).map(p => p.name);
-  $: selectedGames = $availableGames.filter(g => g.selected).map(g => g.name);
+
+  $: selectedPrograms = $availablePrograms.filter((p) => p.selected).map((p) => p.name);
+  $: selectedGames = $availableGames.filter((g) => g.selected).map((g) => g.name);
 </script>
 
 <div class="space-y-4">
   <h2 class="text-xl font-semibold text-white">Confirm Delegation</h2>
   <p class="text-gray-300">Review the delegation details before confirming.</p>
-  
+
   <div class="space-y-4 p-4 bg-black/10 backdrop-blur-sm border border-white/10 rounded-xl">
     <div>
       <p class="text-sm font-medium text-gray-300">Wallet Nickname</p>
@@ -48,7 +46,7 @@
         {/if}
       </p>
     </div>
-    
+
     <!-- Additional Delegates -->
     {#if additionalDelegates.length > 0}
       <div>
@@ -66,7 +64,7 @@
         </div>
       </div>
     {/if}
-    
+
     <div>
       <p class="text-sm font-medium text-gray-300">Permissions</p>
       {#if permission === 'full'}
@@ -91,7 +89,7 @@
       {/if}
     </div>
   </div>
-  
+
   <div class="flex justify-between">
     <button
       class="bg-black/10 text-white px-6 py-2 rounded-xl hover:bg-black/20 transition-all duration-300 backdrop-blur-sm border border-white/10 flex items-center"

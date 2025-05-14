@@ -32,13 +32,27 @@ The Wallet Delegation Manager provides a user-friendly interface for managing cr
 
 ### Installation
 
-```bash
+```sh
 # Install dependencies
 pnpm install
+
+# Create a keypair for development
+pnpm run dev:keypair
+# NOTE: be sure to fund it before proceeding
+
+# Create a vault for development
+pnpm run dev:vault
 
 # Start development server
 pnpm dev
 
+# Check whats in the vault
+pnpm run dev:check
+```
+
+#### Building for production
+
+```sh
 # Build for production
 pnpm build
 ```
@@ -57,4 +71,4 @@ The application is structured around a main DelegationManager component that han
 
 - **Components**: Modular Svelte components in `src/lib/components/`
 - **State Management**: Svelte stores for managing application state
-- **Types**: TypeScript interfaces for type safety 
+- **Types**: TypeScript interfaces for type safety
