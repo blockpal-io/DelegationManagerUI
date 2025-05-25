@@ -1,5 +1,13 @@
 # Blockpal Wallet Delegation Manager UI
 
+> **⚠️ ARCHIVED REPOSITORY**
+> 
+> This repository has been archived as the Delegation Manager UI has now been fully incorporated into the Blockpal browser extension wallet. 
+> 
+> **New Location:** https://github.com/blockpal-io/vault-wallet/tree/main/chrome-extension/src/delegation-manager
+> 
+> Please refer to the main vault-wallet repository for the latest version and active development.
+
 A modern web interface for managing Solana wallet delegations, built with Svelte and TypeScript. This is a mock up project for the web components that will become part of the [Blockpal browser extension](https://github.com/blockpal-io/vault-wallet).
 
 ## Overview
